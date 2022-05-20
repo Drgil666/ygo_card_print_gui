@@ -1,12 +1,11 @@
 package util;
-
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import view.Main;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +42,7 @@ public class SeleniumUtil {
         //driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get(URL);
-        System.out.println("Chrome初始化完成!");
+        Main.addLine("Chrome初始化完成!");
         Thread.sleep(3000);
     }
 
@@ -71,22 +70,22 @@ public class SeleniumUtil {
         driver.navigate().refresh();
         Thread.sleep(2000);
         //输入卡密
-        System.out.println("输入卡片代码:" + code);
+        Main.addLine("输入卡片代码:" + code);
         WebElement cardCode = driver.findElement(By.xpath(CARD_CODE));
         cardCode.clear();
         cardCode.sendKeys(code);
-        System.out.println("点击卡片");
+//        Main.addLine("点击卡片");
         WebElement cardCodeConfirm = driver.findElement(By.xpath(CARD_CODE_CONFIRM));
         cardCodeConfirm.click();
         //点击卡片,等待加载
         Thread.sleep(10000);
-        System.out.println("准备下载...");
+//        Main.addLine ("准备下载...");
         WebElement downloadButton = driver.findElement(By.xpath(DOWNLOAD_BUTTON));
         downloadButton.click();
-        System.out.println("下载");
+//        Main.addLine("下载");
         Thread.sleep(10000);
         WebElement cardName = driver.findElement(By.xpath("/html/body/div[1]/div/section/main/div/div/div[2]/div/div[1]/div/div/div[2]/form/div[2]/div[2]/div/div/div/input"));
-        System.out.println("卡名：" + cardName.getAttribute("value"));
+        Main.addLine("卡名：" + cardName.getAttribute("value"));
         Thread.sleep(5000);
         return cardName.getAttribute("value");
     }

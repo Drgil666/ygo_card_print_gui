@@ -33,22 +33,18 @@ public class Main {
     private static final long RIGHT_MARGIN = 568L;
     private static final long TOP_MARGIN = 284L;
     private static final long BOTTOM_MARGIN = 114L;
+    public static JFrame frame = new JFrame ("红龙印卡机 By-DrGilbert");
+    public static TextArea textArea;
     public static void main (String[] args) {
-        final JFrame frame = new JFrame ("This is my first FrameTest");
         //设置界面可见：
-        frame.setVisible (true);
-        //设置窗口大小：
-        frame.setSize (500,500);
-        //设置背景颜色：
-        frame.setBackground (Color.orange);
-        //设置弹出初始位置：
-        frame.setLocation (500,500);
-        //设置界面大小固定：
+        frame.setSize (800,500);
+        frame.setLayout (null);
+        frame.setLocation (750,400);
         frame.setResizable (false);
         frame.setDefaultCloseOperation (WindowConstants.EXIT_ON_CLOSE);
         // 创建一个默认的文件选取器
-        JButton openBtn = new JButton ("打开");
-        openBtn.setBounds (0,0,50,50);
+        JButton openBtn = new JButton ("上传ydk文件");
+        openBtn.setBounds (650,150,120,60);
         openBtn.addActionListener (new ActionListener () {
             @Override
             public void actionPerformed (ActionEvent e) {
@@ -62,6 +58,17 @@ public class Main {
             }
         });
         frame.add (openBtn);
+        textArea = new TextArea ("这是日志打印窗口",27,15);
+        textArea.setEditable (false);
+        textArea.setBounds (60,30,300,400);
+        textArea.setVisible (true);
+        JScrollPane scrollPane = new JScrollPane ();
+        scrollPane.setHorizontalScrollBarPolicy (JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy (JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setViewportView (textArea);
+        frame.add (scrollPane);
+        frame.add (textArea);
+        frame.setVisible (true);
     }
     private static void fileOpen (Component parent) throws IOException, InterruptedException {
         JFileChooser fileChooser = new JFileChooser ();
@@ -84,36 +91,59 @@ public class Main {
             generate (file.getAbsolutePath ());
         }
     }
-    private static void addLine (String text) {
+    public static void addLine (String text) {
+        textArea.append ("\n"+text);
     }
-    private static void createTemplate(Integer size) throws IOException {
-        XWPFDocument document = new XWPFDocument();
-        CTSectPr sectPr = document.getDocument().getBody().addNewSectPr();
-        CTPageMar pageMar = sectPr.addNewPgMar();
-        pageMar.setLeft(LEFT_MARGIN);
-        pageMar.setRight(RIGHT_MARGIN);
-        pageMar.setTop(TOP_MARGIN);
-        pageMar.setBottom(BOTTOM_MARGIN);
-        XWPFParagraph paragraph = document.createParagraph();
-        paragraph.setAlignment(ParagraphAlignment.LEFT);
+    public static void addDialog (String title,String text) {
+        final JDialog dialog = new JDialog (frame,title,true);
+        //弹出的对话框
+        dialog.setBounds (300,300,500,150);
+        //设置弹出对话框的位置和大小
+        dialog.setLayout (null);
+        JButton button = new JButton ("确定");
+        button.setBounds (220,60,60,30);
+        button.addActionListener (new ActionListener () {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                dialog.dispose ();
+            }
+        });
+        dialog.add (button);
+        JLabel label = new JLabel (text);
+        label.setHorizontalAlignment (JLabel.CENTER);
+        label.setVerticalAlignment (JLabel.CENTER);
+        label.setBounds (10,10,500,20);
+        dialog.add (label);
+        dialog.setVisible (true);
+    }
+    private static void createTemplate (Integer size) throws IOException {
+        XWPFDocument document = new XWPFDocument ();
+        CTSectPr sectPr = document.getDocument ().getBody ().addNewSectPr ();
+        CTPageMar pageMar = sectPr.addNewPgMar ();
+        pageMar.setLeft (LEFT_MARGIN);
+        pageMar.setRight (RIGHT_MARGIN);
+        pageMar.setTop (TOP_MARGIN);
+        pageMar.setBottom (BOTTOM_MARGIN);
+        XWPFParagraph paragraph = document.createParagraph ();
+        paragraph.setAlignment (ParagraphAlignment.LEFT);
         // 设置边距
-        for (int i = 1; i <= Math.ceil(size / 3.0); i++) {
+        for (int i = 1;i <= Math.ceil (size / 3.0);i++) {
             // 设置左对齐
-            XWPFRun run = paragraph.createRun();
+            XWPFRun run = paragraph.createRun ();
             //创建段落文本
             String text = "{{@image" + (3 * (i - 1) + 1) + "}}  {{@image" + (3 * (i - 1) + 2) + "}}  {{@image" + (3 * (i - 1) + 3) + "}}";
-            run.setText(text);
-            if (i != Math.ceil(size / 3.0)) {
-                run.addBreak(BreakType.TEXT_WRAPPING);
+            run.setText (text);
+            if (i != Math.ceil (size / 3.0)) {
+                run.addBreak (BreakType.TEXT_WRAPPING);
             }
             if (i % 3 != 0) {
-                run.addBreak(BreakType.TEXT_WRAPPING);
+                run.addBreak (BreakType.TEXT_WRAPPING);
             }
         }
-        FileOutputStream out = new FileOutputStream(new File(TEMPLATE_PATH));
+        FileOutputStream out = new FileOutputStream (new File (TEMPLATE_PATH));
         //生成文件
-        document.write(out);
-        out.close();
+        document.write (out);
+        out.close ();
     }
     private static XWPFTemplate createExport (final List<String> imageList) {
         XWPFTemplate template = XWPFTemplate.compile (TEMPLATE_PATH).render (new HashMap<String, Object> (10) {{
@@ -131,27 +161,26 @@ public class Main {
         String lineTxt;
         List<String> imageList = new ArrayList<String> ();
         while ((lineTxt = bufferedReader.readLine ()) != null) {
-            addLine (lineTxt);
-            System.out.println (lineTxt);
+//            addLine (lineTxt);
             if (org.apache.commons.lang3.StringUtils.isNumeric (lineTxt)) {
                 Integer cardCode = Integer.parseInt (lineTxt);
-
                 String fileName = cardCode + SUFFIX_PNG;
                 if (! new File (CARD_PATH,fileName).exists ()) {
                     //如果文件未被下载则下载
-                    SeleniumUtil.getImageByCardCode (cardCode.toString ());
+                    String cardName = SeleniumUtil.getImageByCardCode (cardCode.toString ());
+                    File file = new File (CARD_PATH,cardName + SUFFIX_PNG);
+                    file.renameTo (new File (CARD_PATH,fileName));
                 }
                 imageList.add (fileName);
             }
         }
         addLine ("生成DOCX中...");
-        createTemplate(imageList.size());
+        createTemplate (imageList.size ());
         XWPFTemplate template = createExport (imageList);
         OutputStream stream = new FileOutputStream (new File (FILE_PATH,EXPORT_DOC_PATH));
         template.writeAndClose (stream);
         stream.close ();
         addLine ("转换成PDF中...");
         PdfUtil.convertToPdf ();
-        Thread.sleep (2000);
     }
 }

@@ -1,7 +1,7 @@
 package util;
-
 import com.documents4j.api.IConverter;
 import com.documents4j.job.LocalConverter;
+import view.Main;
 
 import java.io.*;
 /**
@@ -25,5 +25,7 @@ public class PdfUtil {
                 .as(com.documents4j.api.DocumentType.PDF)
                 .execute();
         outputStream.close();
+        Main.addLine ("转换完成!");
+        Main.addDialog ("通知","转换已成功!");
     }
 }
