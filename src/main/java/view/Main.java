@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class Main {
     public static final String SUFFIX_PNG = ".png";
-    public static final String FILE_PATH = "D://card_print_test";
+    public static final String FILE_PATH = System.getProperty ("user.dir");
     public static final String CARD_PATH = FILE_PATH + "/card";
     public static final Integer WIDTH = 225;
     public static final Integer HEIGHT = 328;
@@ -38,10 +38,11 @@ public class Main {
     public static void main (String[] args) {
         //设置界面可见：
         frame.setSize (800,500);
+        frame.setBackground (Color.white);
         frame.setLayout (null);
         frame.setLocation (750,400);
         frame.setResizable (false);
-        frame.setDefaultCloseOperation (WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
         // 创建一个默认的文件选取器
         JButton openBtn = new JButton ("上传ydk文件");
         openBtn.setBounds (650,150,120,60);
@@ -65,10 +66,12 @@ public class Main {
         JScrollPane scrollPane = new JScrollPane ();
         scrollPane.setHorizontalScrollBarPolicy (JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setVerticalScrollBarPolicy (JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.getVerticalScrollBar ().setUnitIncrement (20);
         scrollPane.setViewportView (textArea);
         frame.add (scrollPane);
         frame.add (textArea);
         frame.setVisible (true);
+//        addLine ("获取目录：" + System.getProperty ("user.dir"));
     }
     private static void fileOpen (Component parent) throws IOException, InterruptedException {
         JFileChooser fileChooser = new JFileChooser ();
@@ -92,7 +95,7 @@ public class Main {
         }
     }
     public static void addLine (String text) {
-        textArea.append ("\n"+text);
+        textArea.append ("\n" + text);
     }
     public static void addDialog (String title,String text) {
         final JDialog dialog = new JDialog (frame,title,true);
@@ -155,8 +158,13 @@ public class Main {
     }
     private static void generate (String filepath) throws InterruptedException, IOException {
         addLine ("等待初始化...");
+        File file = new File (FILE_PATH,"card");
+        if (! file.exists ()) {
+            file.mkdir ();
+        }
         SeleniumUtil.pre ();
         addLine ("初始化完成，开始执行...");
+
         BufferedReader bufferedReader = new BufferedReader (new InputStreamReader (new FileInputStream (filepath)));
         String lineTxt;
         List<String> imageList = new ArrayList<String> ();
@@ -168,7 +176,7 @@ public class Main {
                 if (! new File (CARD_PATH,fileName).exists ()) {
                     //如果文件未被下载则下载
                     String cardName = SeleniumUtil.getImageByCardCode (cardCode.toString ());
-                    File file = new File (CARD_PATH,cardName + SUFFIX_PNG);
+                    file = new File (CARD_PATH,cardName + SUFFIX_PNG);
                     file.renameTo (new File (CARD_PATH,fileName));
                 }
                 imageList.add (fileName);
@@ -182,5 +190,6 @@ public class Main {
         stream.close ();
         addLine ("转换成PDF中...");
         PdfUtil.convertToPdf ();
+        addLine ("---------------------");
     }
 }

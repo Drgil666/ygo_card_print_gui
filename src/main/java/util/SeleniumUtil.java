@@ -24,7 +24,7 @@ public class SeleniumUtil {
     public static WebDriver driver;
     public static final String CARD_CODE = "/html/body/div[1]/div/section/main/div/div/div[2]/div/div[1]/div/div/div[2]/form/div[15]/div[2]/div/div[1]/div/input";
     public static final String CARD_CODE_CONFIRM = "/html/body/div[1]/div/section/main/div/div/div[2]/div/div[1]/div/div/div[2]/form/div[15]/div[2]/div/div[2]/div/button[1]";
-    public static String downloadPath = "D:\\card_print_test\\card";
+    public static String downloadPath = Main.FILE_PATH+"\\card";
 
     public static void pre() throws InterruptedException {
         preChrome();
@@ -37,7 +37,7 @@ public class SeleniumUtil {
         chromeOptions.setExperimentalOption("prefs", hashMap);
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-        System.setProperty("webdriver.chrome.driver", "C:/Users/25741/Desktop/ygo_card_print/chrome/Application/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", Main.FILE_PATH+"/chrome/Application/chromedriver.exe");
         driver = new ChromeDriver (desiredCapabilities);
         //driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);

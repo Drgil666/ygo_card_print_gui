@@ -9,7 +9,7 @@ import java.io.*;
  * @date 2022/4/25 12:53
  */
 public class PdfUtil {
-    private static final String FILE_PATH = "D://card_print_test";
+    private static final String FILE_PATH = Main.FILE_PATH;
     private static final String EXPORT_NAME = "export.docx";
     private static final String EXPORT_PDF_NAME = "export.pdf";
 
