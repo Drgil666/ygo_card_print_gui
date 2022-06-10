@@ -39,8 +39,8 @@ public class DigimonSeleniumUtilTest {
             imageList.add(cardUrl);
         }
         System.out.println("生成DOCX中...");
-        Main.createTemplate(imageList.size());
-        XWPFTemplate template = Main.createExportByURL(imageList);
+        Main.createYgoTemplate(imageList.size());
+        XWPFTemplate template = Main.createDigimonExportByLocal(imageList);
         OutputStream stream = new FileOutputStream(new File(FILE_PATH, EXPORT_DOC_PATH));
         template.writeAndClose(stream);
         stream.close();

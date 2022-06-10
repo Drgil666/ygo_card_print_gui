@@ -5,6 +5,7 @@ import com.deepoove.poi.data.Pictures;
 import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
+import util.DigimonSeleniumUtil;
 import util.PdfUtil;
 import util.YuGiOhSeleniumUtil;
 
@@ -15,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,17 +28,24 @@ public class Main {
     public static final String SUFFIX_PNG = ".png";
     public static final String FILE_PATH = System.getProperty("user.dir");
     public static final String CARD_PATH = FILE_PATH + "/card";
-    public static final Integer WIDTH = 225;
-    public static final Integer HEIGHT = 328;
+    public static final Integer YGO_WIDTH = 225;
+    public static final Integer YGO_HEIGHT = 328;
+    public static final Integer DIGIMON_WIDTH = 238;
+    public static final Integer DIGIMON_HEIGHT = 335;
     public static final String TEMPLATE_PATH = FILE_PATH + "/template.docx";
     public static final String EXPORT_DOC_PATH = "export.docx";
     public static final String EXPORT_PDF_PATH = "export.pdf";
-    private static final long LEFT_MARGIN = 568L;
-    private static final long RIGHT_MARGIN = 568L;
-    private static final long TOP_MARGIN = 284L;
-    private static final long BOTTOM_MARGIN = 114L;
+    private static final long YGO_LEFT_MARGIN = 568L;
+    private static final long YGO_RIGHT_MARGIN = 568L;
+    private static final long YGO_TOP_MARGIN = 114L;
+    private static final long YGO_BOTTOM_MARGIN = 114L;
+    private static final long DIGIMON_LEFT_MARGIN = 300L;
+    private static final long DIGIMON_RIGHT_MARGIN = 300L;
+    private static final long DIGIMON_TOP_MARGIN = 50L;
+    private static final long DIGIMON_BOTTOM_MARGIN = 50L;
     public static JFrame frame = new JFrame("红龙印卡机 By-DrGilbert");
-    public static TextArea textArea=new TextArea("这是日志打印窗口", 27, 15);;
+    public static JTextArea textArea1 = new JTextArea("这是日志打印窗口", 27, 15);
+    public static JTextField textArea2 = new JTextField("请在这里输入dtcg的json文本");
 
     public static void main(String[] args) {
         //设置界面可见：
@@ -47,9 +56,9 @@ public class Main {
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // 创建一个默认的文件选取器
-        JButton openBtn = new JButton("上传ydk文件");
-        openBtn.setBounds(650, 150, 120, 60);
-        openBtn.addActionListener(new ActionListener() {
+        JButton openBtn1 = new JButton("上传ydk文件");
+        openBtn1.setBounds(650, 150, 120, 60);
+        openBtn1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -61,17 +70,83 @@ public class Main {
                 }
             }
         });
-        frame.add(openBtn);
-        textArea.setEditable(false);
-        textArea.setBounds(60, 30, 300, 400);
-        textArea.setVisible(true);
+        JButton openBtn2 = new JButton("下载dtcg");
+        openBtn2.setBounds(600, 350, 180, 60);
+        openBtn2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(textArea2.getText());
+                String card = textArea2.getText();
+                card = card.replace("[", "").replace("]", "").replace("\"", "");
+                List<String> cardList = Arrays.asList(card.split(","));
+                cardList = cardList.subList(1, cardList.size());
+                try {
+                    DigimonSeleniumUtil.pre();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                List<String> imageList = new ArrayList<>();
+                for (String cardCode : cardList) {
+                    String fileName = cardCode + ".jpg";
+                    File file = new File(DigimonSeleniumUtil.downloadPath, fileName);
+                    if (!file.exists()) {
+                        try {
+                            String cardUrl = DigimonSeleniumUtil.getImageByCardName(cardCode);
+                            DigimonSeleniumUtil.downloadImage(cardUrl, fileName);
+                        } catch (InterruptedException | IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                    imageList.add(fileName);
+                }
+                System.out.println("生成DOCX中...");
+                try {
+                    Main.createDigimonTemplate(imageList.size());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                XWPFTemplate template = Main.createDigimonExportByLocal(imageList);
+                OutputStream stream = null;
+                try {
+                    stream = new FileOutputStream(new File(FILE_PATH, EXPORT_DOC_PATH));
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    template.writeAndClose(stream);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    stream.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                System.out.println("转换成PDF中...");
+                try {
+                    PdfUtil.convertToPdf();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                System.out.println("---------------------");
+            }
+        });
+        frame.add(openBtn1);
+        frame.add(openBtn2);
+        textArea1.setEditable(false);
+        textArea1.setBounds(60, 30, 300, 400);
+        textArea1.setVisible(true);
+        textArea2.setEditable(true);
+        textArea2.setBounds(400, 30, 200, 300);
+        textArea2.setVisible(true);
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
-        scrollPane.setViewportView(textArea);
+        scrollPane.setViewportView(textArea1);
         frame.add(scrollPane);
-        frame.add(textArea);
+        frame.add(textArea1);
+        frame.add(textArea2);
         frame.setVisible(true);
 //        addLine ("获取目录：" + System.getProperty ("user.dir"));
     }
@@ -99,7 +174,7 @@ public class Main {
     }
 
     public static void addLine(String text) {
-        textArea.append("\n" + text);
+        textArea1.append("\n" + text);
     }
 
     public static void addDialog(String title, String text) {
@@ -125,14 +200,14 @@ public class Main {
         dialog.setVisible(true);
     }
 
-    public static void createTemplate(Integer size) throws IOException {
+    public static void createYgoTemplate(Integer size) throws IOException {
         XWPFDocument document = new XWPFDocument();
         CTSectPr sectPr = document.getDocument().getBody().addNewSectPr();
         CTPageMar pageMar = sectPr.addNewPgMar();
-        pageMar.setLeft(LEFT_MARGIN);
-        pageMar.setRight(RIGHT_MARGIN);
-        pageMar.setTop(TOP_MARGIN);
-        pageMar.setBottom(BOTTOM_MARGIN);
+        pageMar.setLeft(YGO_LEFT_MARGIN);
+        pageMar.setRight(YGO_RIGHT_MARGIN);
+        pageMar.setTop(YGO_TOP_MARGIN);
+        pageMar.setBottom(YGO_BOTTOM_MARGIN);
         XWPFParagraph paragraph = document.createParagraph();
         paragraph.setAlignment(ParagraphAlignment.LEFT);
         // 设置边距
@@ -154,20 +229,48 @@ public class Main {
         document.write(out);
         out.close();
     }
-
-    private static XWPFTemplate createExportByLocal(final List<String> imageList) {
+    public static void createDigimonTemplate(Integer size) throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        CTSectPr sectPr = document.getDocument().getBody().addNewSectPr();
+        CTPageMar pageMar = sectPr.addNewPgMar();
+        pageMar.setLeft(DIGIMON_LEFT_MARGIN);
+        pageMar.setRight(DIGIMON_RIGHT_MARGIN);
+        pageMar.setTop(DIGIMON_TOP_MARGIN);
+        pageMar.setBottom(DIGIMON_BOTTOM_MARGIN);
+        XWPFParagraph paragraph = document.createParagraph();
+        paragraph.setAlignment(ParagraphAlignment.CENTER);
+        // 设置边距
+        for (int i = 1; i <= Math.ceil(size / 3.0); i++) {
+            // 设置左对齐
+            XWPFRun run = paragraph.createRun();
+            //创建段落文本
+            String text = "{{@image" + (3 * (i - 1) + 1) + "}} {{@image" + (3 * (i - 1) + 2) + "}} {{@image" + (3 * (i - 1) + 3) + "}}";
+            run.setText(text);
+            if (i != Math.ceil(size / 3.0)) {
+                run.addBreak(BreakType.TEXT_WRAPPING);
+            }
+            if (i % 3 != 0) {
+                run.addBreak(BreakType.TEXT_WRAPPING);
+            }
+        }
+        FileOutputStream out = new FileOutputStream(new File(TEMPLATE_PATH));
+        //生成文件
+        document.write(out);
+        out.close();
+    }
+    private static XWPFTemplate createYgoExportByLocal(final List<String> imageList) {
         XWPFTemplate template = XWPFTemplate.compile(TEMPLATE_PATH).render(new HashMap<String, Object>(10) {{
             for (int i = 0; i < imageList.size(); i++) {
-                put("image" + (i + 1), Pictures.ofLocal(CARD_PATH + "/" + imageList.get(i)).size(WIDTH, HEIGHT).create());
+                put("image" + (i + 1), Pictures.ofLocal(CARD_PATH + "/" + imageList.get(i)).size(YGO_WIDTH, YGO_HEIGHT).create());
             }
         }});
         return template;
     }
 
-    public static XWPFTemplate createExportByURL(final List<String> imageList) {
+    public static XWPFTemplate createDigimonExportByLocal(final List<String> imageList) {
         XWPFTemplate template = XWPFTemplate.compile(TEMPLATE_PATH).render(new HashMap<String, Object>(10) {{
             for (int i = 0; i < imageList.size(); i++) {
-                put("image" + (i + 1), Pictures.ofUrl(imageList.get(i)).size(WIDTH, HEIGHT).create());
+                put("image" + (i + 1), Pictures.ofLocal(CARD_PATH + "/" + imageList.get(i)).size(DIGIMON_WIDTH, DIGIMON_HEIGHT).create());
             }
         }});
         return template;
@@ -200,8 +303,8 @@ public class Main {
             }
         }
         addLine("生成DOCX中...");
-        createTemplate(imageList.size());
-        XWPFTemplate template = createExportByLocal(imageList);
+        createYgoTemplate(imageList.size());
+        XWPFTemplate template = createYgoExportByLocal(imageList);
         OutputStream stream = new FileOutputStream(new File(FILE_PATH, EXPORT_DOC_PATH));
         template.writeAndClose(stream);
         stream.close();
