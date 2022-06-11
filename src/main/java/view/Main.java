@@ -77,7 +77,10 @@ public class Main {
             public void actionPerformed(ActionEvent e) {
                 System.out.println(textArea2.getText());
                 String card = textArea2.getText();
-                card = card.replace("[", "").replace("]", "").replace("\"", "");
+                card = card.replace("[", "")
+                        .replace("]", "")
+                        .replace("\"", "")
+                        .replace(" ", "");
                 List<String> cardList = Arrays.asList(card.split(","));
                 cardList = cardList.subList(1, cardList.size());
                 try {
@@ -229,6 +232,7 @@ public class Main {
         document.write(out);
         out.close();
     }
+
     public static void createDigimonTemplate(Integer size) throws IOException {
         XWPFDocument document = new XWPFDocument();
         CTSectPr sectPr = document.getDocument().getBody().addNewSectPr();
@@ -258,6 +262,7 @@ public class Main {
         document.write(out);
         out.close();
     }
+
     private static XWPFTemplate createYgoExportByLocal(final List<String> imageList) {
         XWPFTemplate template = XWPFTemplate.compile(TEMPLATE_PATH).render(new HashMap<String, Object>(10) {{
             for (int i = 0; i < imageList.size(); i++) {
