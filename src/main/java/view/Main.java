@@ -28,8 +28,8 @@ public class Main {
     public static final String SUFFIX_PNG = ".png";
     public static final String FILE_PATH = System.getProperty("user.dir");
     public static final String CARD_PATH = FILE_PATH + "/card";
-    public static final Integer YGO_WIDTH = 225;
-    public static final Integer YGO_HEIGHT = 328;
+    public static final Integer YGO_WIDTH = 223;
+    public static final Integer YGO_HEIGHT = 324;
     public static final Integer DIGIMON_WIDTH = 238;
     public static final Integer DIGIMON_HEIGHT = 335;
     public static final String TEMPLATE_PATH = FILE_PATH + "/template.docx";
@@ -37,8 +37,8 @@ public class Main {
     public static final String EXPORT_PDF_PATH = "export.pdf";
     private static final long YGO_LEFT_MARGIN = 568L;
     private static final long YGO_RIGHT_MARGIN = 568L;
-    private static final long YGO_TOP_MARGIN = 114L;
-    private static final long YGO_BOTTOM_MARGIN = 114L;
+    private static final long YGO_TOP_MARGIN = 228L;
+    private static final long YGO_BOTTOM_MARGIN = 228L;
     private static final long DIGIMON_LEFT_MARGIN = 300L;
     private static final long DIGIMON_RIGHT_MARGIN = 300L;
     private static final long DIGIMON_TOP_MARGIN = 50L;
@@ -212,7 +212,7 @@ public class Main {
         pageMar.setTop(YGO_TOP_MARGIN);
         pageMar.setBottom(YGO_BOTTOM_MARGIN);
         XWPFParagraph paragraph = document.createParagraph();
-        paragraph.setAlignment(ParagraphAlignment.LEFT);
+        paragraph.setAlignment(ParagraphAlignment.CENTER);
         // 设置边距
         for (int i = 1; i <= Math.ceil(size / 3.0); i++) {
             // 设置左对齐
