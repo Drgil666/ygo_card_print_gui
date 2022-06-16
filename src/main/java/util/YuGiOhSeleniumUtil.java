@@ -22,8 +22,8 @@ public class YuGiOhSeleniumUtil {
     public static final String JAPANESE_CARD = "/html/body/div[2]/div[1]/div/div/div[1]/ul/li[3]";
     public static final String CHINESE_CARD = "/html/body/div[2]/div[1]/div/div/div[1]/ul/li[1]";
     public static WebDriver driver;
-    public static final String CARD_CODE = "/html/body/div[1]/div/section/main/div/div/div[2]/div/div[1]/div/div/div[2]/form/div[15]/div[2]/div/div[1]/div/input";
-    public static final String CARD_CODE_CONFIRM = "/html/body/div[1]/div/section/main/div/div/div[2]/div/div[1]/div/div/div[2]/form/div[15]/div[2]/div/div[2]/div/button[1]";
+    public static final String CARD_CODE = "/html/body/div[1]/div/section/main/div/div/div[2]/div[1]/div[1]/div/div/div[2]/form/div[16]/div[2]/div/div[1]/div/input";
+    public static final String CARD_CODE_CONFIRM = "/html/body/div[1]/div/section/main/div/div/div[2]/div[1]/div[1]/div/div/div[2]/form/div[16]/div[2]/div/div[2]/div/button[1]";
     public static String downloadPath = Main.FILE_PATH+"\\card";
 
     public static void pre() throws InterruptedException {
