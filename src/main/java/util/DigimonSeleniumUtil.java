@@ -59,7 +59,7 @@ public class DigimonSeleniumUtil {
         chromeOptions.setExperimentalOption("prefs", hashMap);
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-        System.setProperty("webdriver.chrome.driver", "Y:/Users/DrGilbert/Desktop/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver",Main.FILE_PATH+"/chrome/Application/chromedriver.exe");
         driver = new ChromeDriver(desiredCapabilities);
         //driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
