@@ -44,7 +44,7 @@ public class Main {
     private static final long DIGIMON_TOP_MARGIN = 50L;
     private static final long DIGIMON_BOTTOM_MARGIN = 50L;
     public static JFrame frame = new JFrame("红龙印卡机 By-DrGilbert");
-    public static JTextArea textArea1 = new JTextArea("这是日志打印窗口", 27, 15);
+    public static TextArea textArea1 = new TextArea("这是日志打印窗口", 27, 15);
     public static JTextField textArea2 = new JTextField("请在这里输入dtcg的json文本");
 
     public static void main(String[] args) {
@@ -307,7 +307,8 @@ public class Main {
                 imageList.add(fileName);
             }
         }
-        addLine("生成DOCX中...");
+        addLine("完成卡片下载!生成DOCX中...");
+        YuGiOhSeleniumUtil.after();
         createYgoTemplate(imageList.size());
         XWPFTemplate template = createYgoExportByLocal(imageList);
         OutputStream stream = new FileOutputStream(new File(FILE_PATH, EXPORT_DOC_PATH));

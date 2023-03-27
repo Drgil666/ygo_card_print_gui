@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
  * @date 2022/3/25 19:01
  */
 public class YuGiOhSeleniumUtil {
-    public static final String URL = "https://tools.kooriookami.top/#/yugioh";
-    public static final String CARD_NAME_XPATH = "/html/body/div[1]/div/section/main/div/div/div[2]/div/div[1]/div/div/div[2]/form/div[2]/div[2]/div/div/input";
+    public static final String URL = "http://localhost:8010/#/yugioh";
+    public static final String CARD_NAME_XPATH = "/html/body/div[1]/div/section/main/div/div/div[2]/div[1]/div[1]/div/div/div[2]/form/div[2]/div[2]/div/div/div/input";
     public static final String CARD_CLICK_XPATH = "/html/body/div[2]/div[2]/div/div/div[1]/ul/li";
     public static final String DOWNLOAD_BUTTON = "/html/body/div[1]/div/section/main/div/div/div[2]/div[1]/div[1]/div/div/div[2]/div[1]/div/div[5]/button";
     public static final String CARD_LANGUAGE = "/html/body/div[1]/div/section/main/div/div/div[2]/div[1]/div[1]/div/div/div[2]/form/div[1]/div[2]/div/div/div/div/input";
@@ -73,17 +73,17 @@ public class YuGiOhSeleniumUtil {
         WebElement cardCode = driver.findElement(By.xpath(CARD_CODE));
         cardCode.clear();
         cardCode.sendKeys(code);
-//        Main.addLine("点击卡片");
+        Main.addLine("点击卡片");
         WebElement cardCodeConfirm = driver.findElement(By.xpath(CARD_CODE_CONFIRM));
         cardCodeConfirm.click();
         //点击卡片,等待加载
         Thread.sleep(10000);
-//        Main.addLine ("准备下载...");
+        Main.addLine ("准备下载...");
         WebElement downloadButton = driver.findElement(By.xpath(DOWNLOAD_BUTTON));
         downloadButton.click();
-//        Main.addLine("下载");
+        Main.addLine("下载");
         Thread.sleep(10000);
-        WebElement cardName = driver.findElement(By.xpath("/html/body/div[1]/div/section/main/div/div/div[2]/div/div[1]/div/div/div[2]/form/div[2]/div[2]/div/div/div/input"));
+        WebElement cardName = driver.findElement(By.xpath(CARD_NAME_XPATH));
         Main.addLine("卡名：" + cardName.getAttribute("value"));
         Thread.sleep(5000);
         return cardName.getAttribute("value");
