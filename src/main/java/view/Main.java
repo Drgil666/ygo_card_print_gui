@@ -33,12 +33,12 @@ public class Main {
     public static final Integer DIGIMON_WIDTH = 238;
     public static final Integer DIGIMON_HEIGHT = 335;
     public static final String TEMPLATE_PATH = FILE_PATH + "/template.docx";
-    public static final String EXPORT_DOC_PATH = "export.docx";
-    public static final String EXPORT_PDF_PATH = "export.pdf";
+    public static final String EXPORT_DOC_PATH = "export_请用原始尺寸打印.docx";
+    public static final String EXPORT_PDF_PATH = "export_请用原始尺寸打印.pdf";
     private static final long YGO_LEFT_MARGIN = 568L;
     private static final long YGO_RIGHT_MARGIN = 568L;
-    private static final long YGO_TOP_MARGIN = 228L;
-    private static final long YGO_BOTTOM_MARGIN = 228L;
+    private static final long YGO_TOP_MARGIN = 300L;
+    private static final long YGO_BOTTOM_MARGIN = 156L;
     private static final long DIGIMON_LEFT_MARGIN = 300L;
     private static final long DIGIMON_RIGHT_MARGIN = 300L;
     private static final long DIGIMON_TOP_MARGIN = 50L;
